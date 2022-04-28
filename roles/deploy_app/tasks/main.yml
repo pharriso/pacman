@@ -1,0 +1,24 @@
+---
+
+- name: install packages
+  package:
+    name: 
+      - nginx
+      - git
+    state: installed
+
+- name: write nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+
+- name: clone repo
+  git:
+    repo: https://github.com/daleharvey/pacman
+    dest: /usr/share/nginx/pacman/
+
+- name: start and enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: true

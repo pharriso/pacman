@@ -1,0 +1,6 @@
+- name: create demp vpc
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - pharriso.aws.aws_vpc

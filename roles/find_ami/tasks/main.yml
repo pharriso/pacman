@@ -1,0 +1,18 @@
+---
+
+- name: find ami
+  amazon.aws.ec2_ami_info:
+    region: "{{ ec2_region }}"
+    owners: "{{ instance_info[os].owners }}"
+    filters:
+      name: "{{ instance_info[os].filter }}"
+      architecture: "{{ instance_info[os].architecture }}"
+  register: amis
+
+- name: get latest ami image details
+  ansible.builtin.set_fact:
+    ami: "{{ amis.images | selectattr('name', 'defined') | sort(attribute='creation_date') | last }}"
+
+- name: get latest ami id
+  ansible.builtin.set_fact:
+    ami_id: "{{ ami.image_id }}"

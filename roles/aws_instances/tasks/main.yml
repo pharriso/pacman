@@ -1,0 +1,42 @@
+---
+
+- name: launch ec2 instances
+  amazon.aws.ec2_instance:
+    exact_count: "{{ instance_count }}"
+    key_name: "{{ keypair }}"
+    instance_type: "{{ instance_size }}"
+    security_group: "{{ security_group }}"
+    network:
+      assign_public_ip: true
+    image_id: "{{ ami_id }}"
+    region: "{{ ec2_region }}"
+    vpc_subnet_id: "{{ subnet_id }}"
+    state: running
+    wait: True
+    tags:
+      role: pacman-{{ app_environment }}
+
+- name: find instances
+  amazon.aws.ec2_instance_info:
+    filters:
+      "tag:role": pacman-{{ app_environment }}
+      instance-state-name: [ "running" ]
+  register: found_instances
+
+- name: wait for connection
+  ansible.builtin.wait_for:
+    host: "{{ item.public_ip_address }}"
+    port: "{{ check_port | default(22) }}"
+    delay: 10
+  loop: "{{ found_instances.instances }}"
+  loop_control:
+    label: "{{ item.public_ip_address }}"
+
+- name: add hosts to play
+  ansible.builtin.add_host:
+    name: "{{ item.public_ip_address }}"
+    groups:
+    - new_vms
+  loop: "{{ found_instances.instances }}"
+  loop_control:
+    label: "{{ item.public_ip_address }}"

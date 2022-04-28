@@ -1,0 +1,16 @@
+- name: launch instances
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - find_subnet
+    - find_ami
+    - aws_instances
+
+- name: deploy app
+  hosts: new_vms
+  remote_user: ec2-user
+  become: true
+  roles:
+    - deploy_app
+
+
