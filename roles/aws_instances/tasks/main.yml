@@ -19,6 +19,7 @@
 - name: find instances
   ec2_instance_info:
     filters:
+      region: "{{ ec2_region }}"
       "tag:role": pacman-{{ app_environment }}
       instance-state-name: [ "running" ]
   register: found_instances
