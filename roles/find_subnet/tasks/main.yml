@@ -2,12 +2,14 @@
 
 - name: find vpc id
   ec2_vpc_net_info:
+    region: "{{ ec2_region }}"
     filters:
       "tag:Name": "{{ vpc_name }}"
   register: found_vpcs
 
 - name: find subnet id
   ec2_vpc_subnet_info:
+    region: "{{ ec2_region }}"
     filters:
       vpc-id: "{{ found_vpcs.vpcs[0].vpc_id }}"
   register: found_subnet
