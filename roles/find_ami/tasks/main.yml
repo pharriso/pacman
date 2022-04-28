@@ -1,7 +1,7 @@
 ---
 
 - name: find ami
-  amazon.aws.ec2_ami_info:
+  ec2_ami_info:
     region: "{{ ec2_region }}"
     owners: "{{ instance_info[os].owners }}"
     filters:
